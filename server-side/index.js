@@ -2,7 +2,7 @@ const { GraphQLServer, PubSub } = require('graphql-yoga');
 let nextId = 0;
 let comments = []
 
-const ADD_NEW_COOMENT = "newComment";
+const ADD_NEW_COMMENT = "newComment";
 
 const typeDefs = `
   type Query {
@@ -29,10 +29,10 @@ const resolvers = {
 	comments:() => comments
   },
   Mutation: {
-	addComment:(parent,args,{pubsub}) => {   
-		const newComment = { id: String(nextId++), text: args.text };
+	addComment:(parent,args,{pubsub}) => {  // (parent,args,context,info)
+		const newComment = { id: nextId++, text: args.text };
 		comments.push(newComment);
-		pubsub.publish(ADD_NEW_COOMENT,{newComment:newComment});
+		pubsub.publish(ADD_NEW_COMMENT,{newComment:newComment});
 		return newComment;
 	}
   },
@@ -40,7 +40,7 @@ const resolvers = {
     newComment: {
       subscribe: (parent, args, { pubsub }) => {
         
-        return pubsub.asyncIterator(ADD_NEW_COOMENT)
+        return pubsub.asyncIterator(ADD_NEW_COMMENT)
       },
     }
   },
@@ -55,6 +55,7 @@ const options = {
 	playground: '/',
 	cors:{
 		origin:"*"
+		//origin:process.env.HOSTS.split(',') // "http://localhost:3000,https://misite.com....."
 	}
   };
 

@@ -14,10 +14,7 @@ subscription{
 
 class ListComments extends Component {
 
-	state = {
-		comments: []
-	}
-
+	
 	render() {
 		let comments = []
 		return (
